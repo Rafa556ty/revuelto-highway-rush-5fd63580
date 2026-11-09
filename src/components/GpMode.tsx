@@ -237,9 +237,31 @@ function PitView({
     const el = ref.current;
     if (!el || !car.model) return;
     let disposed = false;
-    let handle: { dispose: () => void } | null = null;
+    let handle: import("@/game/gp-pit").GpDriveHandle | null = null;
+    const keyMap: Record<string, "left" | "right" | "gas" | "brake" | "horn"> = {
+      ArrowLeft: "left",
+      KeyA: "left",
+      ArrowRight: "right",
+      KeyD: "right",
+      ArrowUp: "gas",
+      KeyW: "gas",
+      ArrowDown: "brake",
+      KeyS: "brake",
+      Space: "brake",
+      KeyH: "horn",
+    };
+    const onKey = (down: boolean) => (e: KeyboardEvent) => {
+      const k = keyMap[e.code];
+      if (!k || !handle) return;
+      e.preventDefault();
+      handle.input[k] = down;
+    };
+    const kd = onKey(true);
+    const ku = onKey(false);
+    window.addEventListener("keydown", kd);
+    window.addEventListener("keyup", ku);
     import("@/game/gp-pit")
-      .then((m) => m.mountPit(el, car.model!))
+      .then((m) => m.mountGpDrive(el, car.model!, { audio: null, onHud: () => {} }))
       .then((h) => {
         if (disposed) h.dispose();
         else {
@@ -250,6 +272,8 @@ function PitView({
       .catch((e: unknown) => !disposed && setError(e instanceof Error ? e.message : String(e)));
     return () => {
       disposed = true;
+      window.removeEventListener("keydown", kd);
+      window.removeEventListener("keyup", ku);
       handle?.dispose();
     };
   }, [car]);
