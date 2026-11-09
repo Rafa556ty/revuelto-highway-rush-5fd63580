@@ -225,7 +225,10 @@ export function buildTerrain(track: TrackCollision): Terrain {
       spots.push({ x, z, s: 0.8 + hash(x, z) * 0.9, rot: hash(z, x) * 6.28, kind: hash(x + 3, z) > 0.45 ? 0 : 1 });
     }
   // Phone budget: at most MAX_TREES instances.
-  while (spots.length > MAX_TREES) spots.splice(Math.floor(hash(spots.length, 7) * spots.length), 1);
+  if (spots.length > MAX_TREES) {
+    const keep = MAX_TREES / spots.length;
+    for (let i = spots.length - 1; i >= 0; i--) if (hash(i, 7.7) > keep) spots.splice(i, 1);
+  }
   const group = new THREE.Group();
   group.name = "gp-scenery";
   group.add(ground);
