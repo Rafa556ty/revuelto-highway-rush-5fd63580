@@ -1,0 +1,13 @@
+{
+  "source": "github:Rafa556ty/lamborghinirevueltohighwaydashv13dupdate",
+  "capabilities": [
+    {"capability": "code", "source": "src/ (TanStack Start game, Three.js)", "outcome": "migrate", "status": "verified", "next_action": "none"},
+    {"capability": "assets", "source": "public/game-assets, public/assets, src/assets", "outcome": "migrate", "status": "verified", "next_action": "none"},
+    {"capability": "schema", "source": "none detected", "outcome": "not_applicable", "status": "verified", "next_action": "none"},
+    {"capability": "records", "source": "none detected", "outcome": "not_applicable", "status": "verified", "next_action": "none"},
+    {"capability": "auth", "source": "none detected", "outcome": "not_applicable", "status": "verified", "next_action": "none"},
+    {"capability": "storage/providers/endpoints/webhooks/schedules/secrets", "source": "none detected", "outcome": "not_applicable", "status": "verified", "next_action": "none"},
+    {"capability": "local saves", "source": "localStorage (settings/language)", "outcome": "preserve", "status": "verified", "next_action": "none"},
+    {"capability": "verification", "source": "tests + preview", "outcome": "verify", "status": "verified", "next_action": "real-device feel, sound and frame rate checked by user"}
+  ]
+}
