@@ -26,3 +26,10 @@
 - [x] Add the uploaded Ferrari SF90 Stradale as realistic traffic, more frequent than the Bugatti.
 - [x] Same calm/push sports-car rhythm with overtakes.
 - [ ] Real SF90 acceleration sound — paused by the user ("esquece som por enquanto").
+
+# GP mode (offline practice)
+
+- [x] Menu button renamed to "Modo GP Online", opens the GP screen.
+- [x] Treino Offline open; Campeonato GP Online locked with DEMO notice.
+- [x] Loading screen → car select (only BMW M3 GTR open) → pit stop on Grand Valley Speedway.
+- [ ] Driving the track from the pit — not requested yet.
