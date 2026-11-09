@@ -8,6 +8,7 @@ import type { TrackCollision } from "./gp-track";
 const STEP = 25; // metres between terrain vertices
 const MARGIN = 1100; // metres of valley/hills beyond the track bounds
 const UNDER = 0.6; // terrain sits this far under the track surface
+const MAX_TREES = 2400;
 
 export type Terrain = {
   group: THREE.Group;
@@ -212,18 +213,19 @@ export function buildTerrain(track: TrackCollision): Terrain {
       const i = r * cols + c;
       const d = dist[i]!;
       if (known[i] || d < 40 || d > 900) continue;
-      const density = d < 300 ? 0.55 : 0.3;
+      // woods hug the circuit, thinning out towards the hills
+      const density = d < 250 ? 0.3 : d < 500 ? 0.12 : 0.05;
       if (hash(c * 1.7, r * 2.3) > density) continue;
       const rise = h[i]! - mean;
       if (rise > 240) continue;
-      for (let k = 0; k < 2; k++) {
-        const x = x0 + (c + hash(c + k, r) - 0.5) * STEP;
-        const z = z0 + (r + hash(c, r + k) - 0.5) * STEP;
-        // keep clear of any track part (service roads, run-offs)
-        if (!Number.isNaN(track.lowestAt(x, z))) continue;
-        spots.push({ x, z, s: 0.8 + hash(x, z) * 0.9, rot: hash(z, x) * 6.28, kind: hash(x + 3, z) > 0.45 ? 0 : 1 });
-      }
+      const x = x0 + (c + hash(c, r) - 0.5) * STEP;
+      const z = z0 + (r + hash(c, r + 1) - 0.5) * STEP;
+      // keep clear of any track part (service roads, run-offs)
+      if (!Number.isNaN(track.lowestAt(x, z))) continue;
+      spots.push({ x, z, s: 0.8 + hash(x, z) * 0.9, rot: hash(z, x) * 6.28, kind: hash(x + 3, z) > 0.45 ? 0 : 1 });
     }
+  // Phone budget: at most MAX_TREES instances.
+  while (spots.length > MAX_TREES) spots.splice(Math.floor(hash(spots.length, 7) * spots.length), 1);
   const group = new THREE.Group();
   group.name = "gp-scenery";
   group.add(ground);
