@@ -208,7 +208,16 @@ export async function mountPit(
   sun.target.position.copy(center);
 
   const camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 4000);
-  camera.position.copy(center).add(new THREE.Vector3(6, 2.4, -6));
+  // Portrait phones are narrow: widen the lens and step back so the whole car fits.
+  const frameDistance = (aspect: number) => {
+    camera.fov = aspect < 1 ? 52 : 40;
+    camera.updateProjectionMatrix();
+    const half = Math.tan((camera.fov * Math.PI) / 360) * Math.min(1, aspect);
+    return Math.min(16, Math.max(8.5, 3.1 / half));
+  };
+  camera.position
+    .copy(center)
+    .add(new THREE.Vector3(1, 0.36, -1).normalize().multiplyScalar(frameDistance(w / h)));
   const controls = new OrbitControls(camera, canvas);
   controls.target.copy(center);
   controls.enableDamping = true;
@@ -237,7 +246,7 @@ export async function mountPit(
     const cw = Math.max(1, container.clientWidth);
     const ch = Math.max(1, container.clientHeight);
     camera.aspect = cw / ch;
-    camera.updateProjectionMatrix();
+    frameDistance(camera.aspect);
     renderer.setSize(cw, ch);
   });
   observer.observe(container);
