@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, Flag, Flame, Globe, Lock, Timer, Trophy, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -186,7 +186,7 @@ function Header({
   sub: string;
   onClose: () => void;
   closeLabel: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }) {
   return (
     <div className="flex items-center justify-between gap-3 border-b border-hud-border bg-scrim-top px-5 pb-3 pt-[max(env(safe-area-inset-top),18px)]">
