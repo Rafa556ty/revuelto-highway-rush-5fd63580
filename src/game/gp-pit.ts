@@ -9,8 +9,11 @@ import { GP_CARS } from "./gp-cars";
 
 export const TRACK_URL = "/game-assets/grand-valley-speedway.glb";
 
-/** Pit box on the main straight (track units are metres). */
-const PIT = { x: -260, z: -840, heading: Math.PI / 2 };
+/** Pit box in front of the garages on the main straight (track units are metres; garages lie at +Z). */
+const PIT = { x: -110, z: -752, heading: Math.PI / 2 };
+/** The camera orbits on the pit-lane side only, never inside the garages. */
+const AZ_MIN = Math.PI / 2 + 0.3;
+const AZ_MAX = (3 * Math.PI) / 2 - 0.3;
 
 const buffers = new Map<string, Promise<ArrayBuffer>>();
 function load(url: string, onProgress?: (r: number) => void) {
@@ -186,8 +189,8 @@ export async function mountPit(
   const tyreGeo = new THREE.TorusGeometry(0.28, 0.13, 10, 20);
   const tyreMat = new THREE.MeshStandardMaterial({ color: 0x111113, roughness: 0.9 });
   for (const [x, z, n] of [
-    [2.4, -1.6, 4],
-    [2.4, 1.6, 3],
+    [-2.4, -1.6, 4],
+    [-2.4, 1.6, 3],
   ] as const) {
     for (let i = 0; i < n; i++) {
       const t = new THREE.Mesh(tyreGeo, tyreMat);
@@ -205,7 +208,7 @@ export async function mountPit(
   sun.target.position.copy(center);
 
   const camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 4000);
-  camera.position.copy(center).add(new THREE.Vector3(6.5, 2.4, 6.5));
+  camera.position.copy(center).add(new THREE.Vector3(6, 2.4, -6));
   const controls = new OrbitControls(camera, canvas);
   controls.target.copy(center);
   controls.enableDamping = true;
@@ -215,6 +218,8 @@ export async function mountPit(
   controls.minDistance = 4;
   controls.maxDistance = 18;
   controls.maxPolarAngle = Math.PI * 0.48;
+  controls.minAzimuthAngle = AZ_MIN;
+  controls.maxAzimuthAngle = -(2 * Math.PI - AZ_MAX);
   controls.update();
   let resume: ReturnType<typeof setTimeout> | undefined;
   const onStart = () => {
@@ -244,6 +249,13 @@ export async function mountPit(
   let raf = 0;
   const frame = () => {
     raf = requestAnimationFrame(frame);
+    if (controls.autoRotate) {
+      // Ping-pong sweep along the pit lane (positive speed lowers the azimuth).
+      const a = (controls.getAzimuthalAngle() + Math.PI * 2) % (Math.PI * 2);
+      const s = Math.abs(controls.autoRotateSpeed);
+      if (a < AZ_MIN + 0.05) controls.autoRotateSpeed = -s;
+      else if (a > AZ_MAX - 0.05) controls.autoRotateSpeed = s;
+    }
     controls.update();
     renderer.render(scene, camera);
   };
