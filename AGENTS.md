@@ -41,3 +41,4 @@ use the editor.
 - Selectable camera views are pure poses in `src/game/camera-views.ts` applied by render3d; scenery and traffic render far behind the car so the reverse camera never exposes unloaded world.
 - Bake road environment reflections once in `road-lighting.ts`; use shared contact textures and local light halos rather than full-screen phone post-processing to limit rendering cost.
 - PC vs phone layout is decided by pure `detectUi`/`resolveUi` in `src/game/device-ui.ts` with a saved manual override in settings; keeps the rule testable.
+- GP mode lives in `GpMode.tsx` (React screens) + pure roster/rules in `src/game/gp-cars.ts` + dynamically imported scene `src/game/gp-pit.ts`; the user-supplied track and GP cars are meshopt GLBs in `public/game-assets`, so menus stay light and rules testable.

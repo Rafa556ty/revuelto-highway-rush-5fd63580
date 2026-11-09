@@ -43,7 +43,8 @@ import bullEmblem from "@/assets/bull-emblem.png";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { GarageViewer } from "@/components/GarageViewer";
+import { GpMode } from "@/components/GpMode";
+import { gpText } from "@/lib/gp-i18n";
 import { GameAudio } from "@/game/audio";
 import {
   MAX_SPEED,
@@ -163,7 +164,7 @@ export function RacingGame() {
   const [showFirstLangModal, setShowFirstLangModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showDemoModal, setShowDemoModal] = useState(false);
-  const [showGarage, setShowGarage] = useState(false);
+  const [showGp, setShowGp] = useState(false);
   const [showPoliceOff, setShowPoliceOff] = useState(false);
   const [uiPref, setUiPref] = useState<UiPref>("auto");
   const [detectedUi, setDetectedUi] = useState<UiMode>("touch");
@@ -858,10 +859,10 @@ export function RacingGame() {
                   variant="outline"
                   size="sm"
                   className="w-full border-primary/40 bg-hud/80 text-foreground hover:bg-secondary text-xs"
-                  onClick={() => setShowGarage(true)}
+                  onClick={() => setShowGp(true)}
                 >
                   <Car className="size-3.5 mr-1.5 text-primary" />
-                  {t.garage}
+                  {gpText(lang).menuButton}
                 </Button>
 
                 <Button
@@ -1062,18 +1063,7 @@ export function RacingGame() {
           </div>
         )}
 
-        {showGarage && (
-          <GarageViewer
-            labels={{
-              title: t.garage,
-              hint: t.garageHint,
-              loading: t.garageLoading,
-              error: t.garageError,
-              close: t.close,
-            }}
-            onClose={() => setShowGarage(false)}
-          />
-        )}
+        {showGp && <GpMode lang={lang} isPc={isPc} onClose={() => setShowGp(false)} />}
 
         {/* Requirement 7: Demo Alert Dialog ("Pintar carro, trocar de carro") */}
         {showDemoModal && (
