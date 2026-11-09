@@ -120,7 +120,7 @@ export function stepDrive(
 
   // Velocity stays put in the world while the body turns, then the tyres
   // pull the sideways part back in, limited by grip.
-  s.vL += s.vF * yaw * dt;
+  s.vL -= s.vF * yaw * dt;
   const pull = Math.min(Math.abs(s.vL) * LAT_K, aMax) * dt;
   s.vL = Math.abs(s.vL) <= pull ? 0 : s.vL - Math.sign(s.vL) * pull;
 
